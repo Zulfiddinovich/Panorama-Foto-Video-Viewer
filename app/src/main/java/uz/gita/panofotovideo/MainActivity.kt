@@ -6,13 +6,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.FrameLayout
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import com.google.vr.ndk.base.DaydreamApi
 import uz.gita.panofotovideo.databinding.VideoActivityBinding
 import uz.gita.panofotovideo.rendering.Mesh
@@ -54,6 +53,10 @@ class MainActivity : AppCompatActivity() {
 //            params.rightMargin = insets.systemWindowInsetRight
 //            insets.consumeSystemWindowInsets()
 //        }
+
+        binding.mediaView.onPositionTouched { position ->
+            binding.bottomLinear.isVisible = !binding.bottomLinear.isVisible
+        }
 
         binding.mediaView.initialize(binding.videoUiContainer.videoUiView)
 
