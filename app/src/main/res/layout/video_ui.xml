@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uz.gita.panofotovideo.VideoUiView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/video_ui_view"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/enter_exit_vr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone"
+            app:backgroundTint="?attr/colorPrimary"
+            app:tint="@android:color/white"
+            app:useCompatPadding="true"
+            app:srcCompat="@drawable/ic_vr_24px"
+            android:contentDescription="@string/enter_vr_label"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#a0000000">
+
+        <ImageButton
+            android:id="@+id/play_pause_toggle"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_pause_24dp"
+            android:contentDescription="@string/pause_label"/>
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            android:layout_width="0dp"/>
+
+        <TextView
+            android:id="@+id/status_text"
+            android:text="..."
+            android:gravity="center|end"
+            android:layout_height="match_parent"
+            android:layout_width="72dp"
+            android:textSize="12dp"
+            android:textColor="#fff"
+            android:textAlignment="textEnd"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
+
+    </LinearLayout>
+</uz.gita.panofotovideo.VideoUiView>
