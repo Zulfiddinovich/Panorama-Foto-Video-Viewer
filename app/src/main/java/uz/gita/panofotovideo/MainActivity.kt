@@ -6,12 +6,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.vr.ndk.base.DaydreamApi
 import uz.gita.panofotovideo.databinding.VideoActivityBinding
 import uz.gita.panofotovideo.rendering.Mesh
@@ -41,9 +41,8 @@ class MainActivity : AppCompatActivity() {
         binding = VideoActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
+        clickListeners()
 
-        binding.vrButton.setOnClickListener { startVrActivity() }
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
 //            val params = binding.vrFab.layoutParams as ConstraintLayout.LayoutParams
@@ -53,6 +52,21 @@ class MainActivity : AppCompatActivity() {
 //            params.rightMargin = insets.systemWindowInsetRight
 //            insets.consumeSystemWindowInsets()
 //        }
+
+
+    }
+
+    private fun clickListeners() {
+        binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
+
+        binding.openImageGalButton.setOnClickListener { bottomSheetDialogOpen().show() }
+
+        binding.openVideoGalButton.setOnClickListener { bottomSheetDialogOpen().show() }
+
+        binding.networkButton.setOnClickListener { bottomSheetDialogOpen().show() }
+
+
+        binding.vrButton.setOnClickListener { startVrActivity() }
 
         binding.mediaView.onPositionTouched { position ->
             binding.bottomLinear.isVisible = !binding.bottomLinear.isVisible
@@ -117,5 +131,16 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         binding.mediaView.destroy()
         super.onDestroy()
+    }
+
+    private fun bottomSheetDialogOpen(): BottomSheetDialog {
+
+        val dialog = BottomSheetDialog(this)
+        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet, null)
+
+//        bottomSheet.buttonSubmit.setOnClickListener { dialog.dismiss() }
+
+        dialog.setContentView(bottomSheet)
+        return dialog
     }
 }
