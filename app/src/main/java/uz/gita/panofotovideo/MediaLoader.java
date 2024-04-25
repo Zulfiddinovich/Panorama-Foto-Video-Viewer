@@ -119,8 +119,8 @@ public class MediaLoader {
 
         @Override
         protected Void doInBackground(Intent... intent) {
-            String defaultUrl = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4";
-//            String defaultUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg";
+//            String defaultUrl = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4";
+            String defaultUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg";
 //            String defaultUrl = "http://rivendell.dmitrybrant.com/pano1.jpg";
 
             Uri uri = (intent != null && intent.length > 0 && intent[0].getData() != null) ?

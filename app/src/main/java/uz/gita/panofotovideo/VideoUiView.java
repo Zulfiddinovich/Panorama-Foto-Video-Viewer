@@ -266,7 +266,7 @@ public class VideoUiView extends LinearLayout {
                 seekBar.setProgress(positionMs);
 
                 StringBuilder status = new StringBuilder();
-                status.append(String.format("%.2f", positionMs / 1000f));
+                status.append(String.format("%.0f", positionMs / 1000f));
                 status.append(" / ");
                 status.append(videoDurationMs / 1000);
                 statusText.setText(status.toString());

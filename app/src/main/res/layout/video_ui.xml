@@ -37,7 +37,7 @@
         android:id="@+id/controls_container"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#a0000000">
+        android:background="@color/Transparent80">
 
         <ImageButton
             android:id="@+id/play_pause_toggle"
