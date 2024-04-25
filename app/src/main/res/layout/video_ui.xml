@@ -6,18 +6,21 @@
     android:id="@+id/video_ui_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:context=".VideoUiView">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress_bar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_width="match_parent"
+            app:trackThickness="6dp"
+            app:indicatorColor="@color/white"
+            android:layout_height="wrap_content"
+            tools:progress="50"
+            android:layout_margin="8dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/enter_exit_vr"
@@ -28,7 +31,7 @@
             app:backgroundTint="?attr/colorPrimary"
             app:tint="@android:color/white"
             app:useCompatPadding="true"
-            app:srcCompat="@drawable/ic_vr_24px"
+            app:srcCompat="@drawable/ic_vr_24"
             android:contentDescription="@string/enter_vr_label"/>
 
     </FrameLayout>
@@ -43,7 +46,7 @@
             android:id="@+id/play_pause_toggle"
             android:layout_width="48dp"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_pause_24dp"
+            android:background="@drawable/ic_pause_32"
             android:contentDescription="@string/pause_label"/>
 
         <SeekBar

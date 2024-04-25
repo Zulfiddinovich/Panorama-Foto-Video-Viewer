@@ -36,6 +36,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import uz.gita.panofotovideo.rendering.CanvasQuad;
 
 /**
@@ -51,6 +52,7 @@ public class VideoUiView extends LinearLayout {
     // These UI elements are only useful when the app is displaying a video.
     private SeekBar seekBar;
     private TextView statusText;
+    private static LinearProgressIndicator mProgressBar;
     private final UiUpdater uiUpdater = new UiUpdater();
 
     // Since MediaPlayer lacks synchronization for internal events, it should only be accessed on the
@@ -175,7 +177,7 @@ public class VideoUiView extends LinearLayout {
                         playPauseToggle.setContentDescription(getResources().getString(R.string.play_label));
                     } else {
                         mediaPlayer.start();
-                        playPauseToggle.setBackgroundResource(R.drawable.ic_pause_24dp);
+                        playPauseToggle.setBackgroundResource(R.drawable.ic_pause_32);
                         playPauseToggle.setContentDescription(getResources().getString(R.string.pause_label));
                     }
                 });
@@ -187,7 +189,12 @@ public class VideoUiView extends LinearLayout {
     }
 
     public void showProgressBar(boolean show) {
-        findViewById(R.id.progress_bar).setVisibility(show ? VISIBLE : GONE);
+        mProgressBar = findViewById(R.id.progress_bar);
+        mProgressBar.setIndeterminate(true);
+        mProgressBar.setIndicatorColor(getResources().getIntArray(R.array.progress_colors));
+        mProgressBar.setIndeterminateAnimationType(LinearProgressIndicator.INDETERMINATE_ANIMATION_TYPE_CONTIGUOUS);
+
+        mProgressBar.setVisibility(show ? VISIBLE : GONE);
     }
 
     public void showControls(boolean show) {

@@ -11,4 +11,8 @@
 
     <color name="Transparent">#00000000</color>
     <color name="Transparent80">#32000000</color>
+
+    <color name="yellow">#FFC107</color>
+    <color name="blue">#073DFF</color>
+    <color name="red_">#FF0707</color>
 </resources>
