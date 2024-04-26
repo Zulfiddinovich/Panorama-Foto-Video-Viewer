@@ -1,12 +1,18 @@
 package uz.gita.panofotovideo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.vr.ndk.base.DaydreamApi
 import uz.gita.panofotovideo.databinding.VideoActivityBinding
 import uz.gita.panofotovideo.rendering.Mesh
+
 
 /**
  * Basic Activity to hold [MonoscopicView] and render a 360 video in 2D.
@@ -27,6 +34,17 @@ import uz.gita.panofotovideo.rendering.Mesh
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: VideoActivityBinding
+    private lateinit var photoPicker: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var photoPicker2: ActivityResultLauncher<Intent>
+    private val photoPicker3 = registerForActivityResult(ActivityResultContracts.GetContent(),
+        fun(it: Uri?) {
+            val galleryUri = it
+            try {
+                Log.d("TAG", "3 uri: $galleryUri")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        })
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -36,12 +54,63 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Range")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = VideoActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         clickListeners()
+        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            /*if (uri != null) {
+                Log.d("TAG", "Selected URI: $uri")
+                val intent = Intent().apply {
+                    putExtra("uri", uri.toString());
+                }
+                binding.mediaView.loadMedia(intent)
+            } else {
+                Log.d("TAG", "No media selected")
+            }*/
+
+            var filePath = ""
+            if (uri != null && uri.scheme.equals("content")) {
+                val cursor = contentResolver.query(uri, arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null)
+                if (cursor != null && cursor.moveToFirst()) {
+                    filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                    cursor.close()
+                }
+            } else {
+                filePath = uri?.path ?: ""
+            }
+            Log.d("TAG", "Selected URI filePath: $filePath")
+            Log.d("TAG", "Selected URI: ${ Uri.parse(filePath)}")
+            val intent = Intent().apply {
+                putExtra("uri", filePath);
+            }
+            binding.mediaView.setUri(Uri.parse(filePath))
+        }
+
+
+        photoPicker2 = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data;
+                if (data != null) {
+                    val selectedImage: Uri? = data.data;
+                    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA);
+                    if (selectedImage != null) {
+                        val cursor = contentResolver.query(selectedImage, filePathColumn, null, null, null);
+                        if (cursor != null) {
+                            cursor.moveToFirst();
+                            cursor.close();
+                            Log.d("TAG", "onCreate: contentResolverUri = $selectedImage")
+                            // use selectedImage
+                        }
+                    }
+                }
+            }
+    }
 
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
@@ -59,9 +128,16 @@ class MainActivity : AppCompatActivity() {
     private fun clickListeners() {
         binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
 
-        binding.openImageGalButton.setOnClickListener { bottomSheetDialogOpen().show() }
+        binding.openImageGalButton.setOnClickListener {
+            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//            val pickPhoto = Intent(Intent.ACTION_GET_CONTENT)
+//            photoPicker2.launch(pickPhoto)
+        }
 
-        binding.openVideoGalButton.setOnClickListener { bottomSheetDialogOpen().show() }
+        binding.openVideoGalButton.setOnClickListener {
+//            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            photoPicker3.launch("image/*")
+        }
 
         binding.networkButton.setOnClickListener { bottomSheetDialogOpen().show() }
 

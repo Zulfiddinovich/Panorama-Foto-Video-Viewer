@@ -22,6 +22,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -138,6 +139,12 @@ public final class MonoscopicView extends GLSurfaceView {
         mediaLoader.handleIntent(intent, uiView);
     }
 
+    public void setUri(Uri uri){
+//        mediaLoader.setUri(uri);
+        mediaLoader.mUri = uri;
+        mediaLoader.handleIntent(new Intent(), uiView);
+    }
+
     /**
      * Detects sensor events and saves them as a matrix.
      */
@@ -212,13 +219,11 @@ public final class MonoscopicView extends GLSurfaceView {
                     previousTouchPointPx.set(event.getX(), event.getY());
 
                     clickedPont.add(new PointF(event.getX(), event.getY()));
-                    Log.d("TAG", "onTouch: down");
 
                     break;
                 }
                 case MotionEvent.ACTION_MOVE:{
                     clickedPont.add(new PointF(event.getX(), event.getY()));
-                    Log.d("TAG", "onTouch: move");
 
                     // Calculate the touch delta in screen space.
                     float touchX = (event.getX() - previousTouchPointPx.x) / PX_PER_DEGREES;
@@ -244,7 +249,6 @@ public final class MonoscopicView extends GLSurfaceView {
                     break;
                 }
                 case MotionEvent.ACTION_UP:{
-                    Log.d("TAG", "onTouch: up");
                     if(clickedPont.size() > 1) {
                         if (calculateDistance(clickedPont)){
                             mSurfaceClick.onClick(event.getX());

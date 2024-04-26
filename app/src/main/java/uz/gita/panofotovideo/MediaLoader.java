@@ -17,6 +17,7 @@ package uz.gita.panofotovideo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,15 +27,22 @@ import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.AnyThread;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,6 +54,9 @@ import uz.gita.panofotovideo.rendering.Utils;
 
 public class MediaLoader {
     private static final String TAG = "MediaLoader";
+    public Uri mUri = null;
+
+    private MediaLoaderTask mMediaLoaderTask;
 
     public static final String MEDIA_FORMAT_KEY = "stereoFormat";
     private static final int DEFAULT_SURFACE_HEIGHT_PX = 2048;
@@ -96,7 +107,13 @@ public class MediaLoader {
     }
 
     public void handleIntent(Intent intent, VideoUiView uiView) {
-        new MediaLoaderTask(uiView).execute(intent);
+        if (mMediaLoaderTask == null){
+            mMediaLoaderTask = new MediaLoaderTask(uiView);
+        } else {
+            mMediaLoaderTask.cancel(true);
+        }
+        mMediaLoaderTask = new MediaLoaderTask(uiView);
+        mMediaLoaderTask.execute(intent);
     }
 
     /**
@@ -105,6 +122,10 @@ public class MediaLoader {
     public void onGlSceneReady(SceneRenderer sceneRenderer) {
         this.sceneRenderer = sceneRenderer;
         displayWhenReady();
+    }
+
+    public void setUri(Uri uri) {
+        mUri = uri;
     }
 
 
@@ -119,13 +140,78 @@ public class MediaLoader {
 
         @Override
         protected Void doInBackground(Intent... intent) {
+//      if (intent == null || intent.length < 1 || intent[0] == null || intent[0].getData() == null) {
+//        // This happens if the Activity wasn't started with the right intent.
+//        errorText = "No URI specified. Using default panorama.";
+//        Log.e(TAG, errorText);
+//        return null;
+//      }
+
+            // Extract the stereoFormat from the Intent's extras.
+            int stereoFormat = intent[0].getIntExtra(MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC);
+            if (stereoFormat != Mesh.MEDIA_STEREO_LEFT_RIGHT
+                    && stereoFormat != Mesh.MEDIA_STEREO_TOP_BOTTOM) {
+                stereoFormat = Mesh.MEDIA_MONOSCOPIC;
+            }
+
+            mesh = Mesh.createUvSphere(
+                    SPHERE_RADIUS_METERS, DEFAULT_SPHERE_ROWS, DEFAULT_SPHERE_COLUMNS,
+                    DEFAULT_SPHERE_VERTICAL_DEGREES, DEFAULT_SPHERE_HORIZONTAL_DEGREES,
+                    stereoFormat);
+
+            // Based on the Intent's data, load the appropriate media from disk.
+//            Uri uri = getUriFromAsset(context, "Universita di Cagliari 1.jpg"); // intent[0].getData();
+//            Uri uri = getUriFromAsset(context, "360.mp4"); // intent[0].getData();
+            Uri uri = /*(intent != null && intent.length > 0 && intent[0].getData() != null) ?*/
+                    /*intent[0].getData() :*/
+                   mUri != null ?
+                           /*getUriFromPicker(context, mUri.getPath())*/
+                           getUriFromAsset(context, "bologna.jpg"):
+                           getUriFromAsset(context, "Universita di Cagliari 1.jpg");
+            try {
+                File file = new File(Objects.requireNonNull(uri.getPath()));
+                if (!file.exists()) {
+                    throw new FileNotFoundException();
+                }
+
+                String type = URLConnection.guessContentTypeFromName(uri.getPath());
+                if (type == null) {
+                    throw new InvalidParameterException("Unknown file type: " + uri);
+                } else if (type.startsWith("image")) {
+                    // Decoding a large image can take 100+ ms.
+                    Log.d(TAG, "doInBackground: image type = " + type);
+                    Log.d(TAG, "doInBackground: image uriPath = " + uri.getPath());
+                    ;
+//                    mediaImage = BitmapFactory.decodeFile(uri.getPath());
+                    mediaImage = BitmapFactory.decodeFile(Uri.parse(uri.getPath()).getPath());
+                } else if (type.startsWith("video")) {
+                    MediaPlayer mp = MediaPlayer.create(context, uri);
+                    synchronized (MediaLoader.this) {
+                        // This needs to be synchronized with the methods that could clear mediaPlayer.
+                        mediaPlayer = mp;
+                    }
+                } else {
+                    throw new InvalidParameterException("Unsupported MIME type: " + type);
+                }
+
+            } catch (IOException | InvalidParameterException e) {
+                String errorText = String.format("Error loading file [%s]: %s", uri.getPath(), e);
+                Log.e(TAG, errorText);
+            }
+
+            displayWhenReady();
+            return null;
+        }
+  /*      @Override
+        protected Void doInBackground(Intent... intent) {
 //            String defaultUrl = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4";
             String defaultUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg";
 //            String defaultUrl = "http://rivendell.dmitrybrant.com/pano1.jpg";
 
             Uri uri = (intent != null && intent.length > 0 && intent[0].getData() != null) ?
-                    intent[0].getData() :
-                    Uri.parse(defaultUrl);
+                    Uri.parse(intent[0].getExtras().getString("uri")) :
+                    getUriFromAsset(context, "Universita di Cagliari 1.jpg");
+//                    Uri.parse(defaultUrl);
             int stereoFormat = intent != null && intent.length > 0 ? intent[0].getIntExtra(MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC) : Mesh.MEDIA_MONOSCOPIC;
 
             if (stereoFormat != Mesh.MEDIA_STEREO_LEFT_RIGHT && stereoFormat != Mesh.MEDIA_STEREO_TOP_BOTTOM) {
@@ -146,7 +232,7 @@ public class MediaLoader {
                     response = client.newCall(request).execute();
                 }
 
-                String type = URLConnection.guessContentTypeFromName(uri.getPath());
+                String type = "image"; // URLConnection.guessContentTypeFromName(uri.getPath());
                 if (type == null) {
                     throw new InvalidParameterException("Unknown file type: " + uri);
                 } else if (type.startsWith("image")) {
@@ -175,7 +261,7 @@ public class MediaLoader {
             displayWhenReady();
             return null;
         }
-
+*/
         @Override
         public void onPostExecute(Void unused) {
             if (uiView == null) {
@@ -363,5 +449,94 @@ public class MediaLoader {
             mediaPlayer = null;
         }
         isDestroyed = true;
+    }
+
+    Uri getUriFromAsset(Context context, String assetFileName) {
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        File tempFile = null;
+        Uri uri = null;
+
+        try {
+            Log.d(TAG, "getUriFromAsset:");
+            inputStream = assetManager.open(assetFileName);
+
+            tempFile = assetFileName.endsWith(".jpg") ?
+                    File.createTempFile("temp_asset", ".jpg", context.getCacheDir()) :
+                    File.createTempFile("temp_asset", ".mp4", context.getCacheDir());
+
+
+            outputStream = Files.newOutputStream(tempFile.toPath());
+
+            byte[] buf = new byte[8192];
+            int length;
+            while ((length = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, length);
+            }
+
+            uri = Uri.fromFile(tempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                    outputStream.close();
+                    tempFile.deleteOnExit();
+                } catch (IOException e) {
+
+                }
+            }
+        }
+        return uri;
+    }
+
+    Uri getUriFromPicker(Context context, String filePath) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        File tempFile = null;
+        Uri uri = null;
+
+        try {
+            File file = new File( filePath);
+            inputStream = new FileInputStream(file);
+
+            tempFile = filePath.endsWith(".jpg") ?
+                    File.createTempFile("tempAsset", ".jpg", context.getExternalFilesDir(null)) :
+                    File.createTempFile("tempAsset", ".mp4", context.getExternalFilesDir(null));
+
+            Log.d(TAG, "getUriFromPicker: " + tempFile.getPath());
+
+            outputStream = Files.newOutputStream(tempFile.toPath());
+
+            byte[] buf = new byte[8192];
+            int length;
+            while ((length = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, length);
+            }
+
+            uri = Uri.fromFile(tempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                    outputStream.close();
+                    tempFile.deleteOnExit();
+                } catch (IOException e) {
+
+                }
+            }
+        }
+        return uri;
+    }
+
+
+    String getPathFromUri(Uri uri){
+        File file = new File(Objects.requireNonNull(uri.getPath()));//create path from uri
+        final String[] split = file.getPath().split(":");//split the path.
+        return split[1];//assign it to a string(your choice).
     }
 }
