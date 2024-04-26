@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -35,20 +34,10 @@ import uz.gita.panofotovideo.rendering.Mesh
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: VideoActivityBinding
     private lateinit var photoPicker: ActivityResultLauncher<PickVisualMediaRequest>
-    private lateinit var photoPicker2: ActivityResultLauncher<Intent>
-    private val photoPicker3 = registerForActivityResult(ActivityResultContracts.GetContent(),
-        fun(it: Uri?) {
-            val galleryUri = it
-            try {
-                Log.d("TAG", "3 uri: $galleryUri")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        })
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            binding.mediaView.loadMedia(intent)
+//            mMonoscopView.loadMedia(intent)
         } else {
             Toast.makeText(this, R.string.permission_warning, Toast.LENGTH_SHORT).show()
         }
@@ -62,55 +51,19 @@ class MainActivity : AppCompatActivity() {
 
         clickListeners()
         photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            /*if (uri != null) {
-                Log.d("TAG", "Selected URI: $uri")
-                val intent = Intent().apply {
-                    putExtra("uri", uri.toString());
-                }
-                binding.mediaView.loadMedia(intent)
-            } else {
-                Log.d("TAG", "No media selected")
-            }*/
-
             var filePath = ""
             if (uri != null && uri.scheme.equals("content")) {
-                val cursor = contentResolver.query(uri, arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null)
+                val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
                 if (cursor != null && cursor.moveToFirst()) {
                     filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
                     cursor.close()
+
+                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
+                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
+                    App.mPickMediaUri = Uri.parse(filePath)
                 }
-            } else {
-                filePath = uri?.path ?: ""
             }
-            Log.d("TAG", "Selected URI filePath: $filePath")
-            Log.d("TAG", "Selected URI: ${ Uri.parse(filePath)}")
-            val intent = Intent().apply {
-                putExtra("uri", filePath);
-            }
-            binding.mediaView.setUri(Uri.parse(filePath))
         }
-
-
-        photoPicker2 = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data;
-                if (data != null) {
-                    val selectedImage: Uri? = data.data;
-                    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA);
-                    if (selectedImage != null) {
-                        val cursor = contentResolver.query(selectedImage, filePathColumn, null, null, null);
-                        if (cursor != null) {
-                            cursor.moveToFirst();
-                            cursor.close();
-                            Log.d("TAG", "onCreate: contentResolverUri = $selectedImage")
-                            // use selectedImage
-                        }
-                    }
-                }
-            }
-    }
 
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
@@ -130,13 +83,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.openImageGalButton.setOnClickListener {
             photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//            val pickPhoto = Intent(Intent.ACTION_GET_CONTENT)
-//            photoPicker2.launch(pickPhoto)
         }
 
         binding.openVideoGalButton.setOnClickListener {
-//            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
-            photoPicker3.launch("image/*")
+            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
         }
 
         binding.networkButton.setOnClickListener { bottomSheetDialogOpen().show() }
@@ -206,7 +156,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         binding.mediaView.destroy()
+
+        // generates - crash with "No such files"
+        cleanCache();
         super.onDestroy()
+    }
+
+    private fun cleanCache() {
+        val directory = cacheDir.listFiles();
+        if(directory != null){
+            for (file in directory){
+                file.delete();
+            }
+        }
     }
 
     private fun bottomSheetDialogOpen(): BottomSheetDialog {

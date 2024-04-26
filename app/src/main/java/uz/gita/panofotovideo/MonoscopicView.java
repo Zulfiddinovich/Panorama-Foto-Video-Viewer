@@ -139,11 +139,6 @@ public final class MonoscopicView extends GLSurfaceView {
         mediaLoader.handleIntent(intent, uiView);
     }
 
-    public void setUri(Uri uri){
-//        mediaLoader.setUri(uri);
-        mediaLoader.mUri = uri;
-        mediaLoader.handleIntent(new Intent(), uiView);
-    }
 
     /**
      * Detects sensor events and saves them as a matrix.
