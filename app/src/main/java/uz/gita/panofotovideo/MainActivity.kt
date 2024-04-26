@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.vr.ndk.base.DaydreamApi
 import uz.gita.panofotovideo.databinding.VideoActivityBinding
 import uz.gita.panofotovideo.rendering.Mesh
+import uz.gita.panofotovideo.util.FileUtils
 
 
 /**
@@ -51,20 +52,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         clickListeners()
-//        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-//            var filePath = ""
-//            if (uri != null && uri.scheme.equals("content")) {
-//                val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
-//                if (cursor != null && cursor.moveToFirst()) {
-//                    filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-//                    cursor.close()
-//
-//                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
-//                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
-//                    App.mPickMediaUri = Uri.parse(filePath)
-//                }
-//            }
-//        }
+        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+//                Log.d("TAG", "onCreate: " + Uri.parse(FileUtils.getLocalPath(this, uri)))
+                App.mPickMediaUri = Uri.parse(FileUtils.getLocalPath(this, uri))
+            }
+        }
 
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
@@ -105,12 +98,12 @@ class MainActivity : AppCompatActivity() {
         checkReadPermissionThenOpen()
     }
 
-    fun imageChooser() {
+    private fun imageChooser() {
 
         // create an instance of the
         // intent of the type image
         val i = Intent()
-        i.setType("image/*")
+        i.setType("*/*")
         i.setAction(Intent.ACTION_GET_CONTENT)
 
         // pass the constant to compare it
@@ -118,17 +111,16 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.startActivityForResult(this, Intent.createChooser(i, "Select Picture"), SELECT_PICTURE_CODE, null)
     }
 
+    @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE_CODE) {
                 // Get the url of the image from data
-                val selectedImageUri = data?.data
-                if (selectedImageUri != null) {
-                    // update the preview image in the layout
-                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
-                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
-                    App.mPickMediaUri = selectedImageUri
+                val uri = data?.data
+
+                if (uri != null){
+                    App.mPickMediaUri = Uri.parse(FileUtils.getLocalPath(this, uri))
                 }
             }
         }

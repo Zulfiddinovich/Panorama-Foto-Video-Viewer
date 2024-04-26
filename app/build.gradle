@@ -6,9 +6,10 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId "uz.gita.panofotovideo"
-        minSdk 19
+        minSdk 21
         targetSdk 34
         versionCode 5
+        multiDexEnabled true
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -17,6 +18,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
     buildTypes {

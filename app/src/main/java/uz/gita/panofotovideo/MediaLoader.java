@@ -27,13 +27,13 @@ import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.AnyThread;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,28 +143,34 @@ public class MediaLoader {
 
             // Uri can be - default photo, or cached image/video for safety even after recreation of Activity
             Uri uri = (App.mPickMediaUri != null && App.mPickMediaUri.getPath() != null ) ?
-                    ( /* 1 */
-                            // if some value is set to mPickMediaUri
-                            (App.mPickMediaUri.getPath().startsWith("/storage/") ?      // "/data/" or "/storage/"
-                            // if mUri is cached and available to show even after recreation of Activity
-                            App.mPickMediaUri :
-                            // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
-                            getUriFromPicker(context, App.mPickMediaUri.getPath()))
-                    ):
+                    App.mPickMediaUri :
+                    getUriFromAsset(context, "universita_di_cagliari.jpg");
 
-                    ( /* 2 */
-                            // if not picked any image or video, should take default asset photo
-                            (App.mAssetMediaUri != null && App.mAssetMediaUri.getPath() != null) ?
-                            // if some value is set to mAssetMediaUri
-                            ( /* 3 */
-                                    App.mAssetMediaUri.getPath().startsWith("/storage/") ?        // "/data/" or "/storage/"
-                                    // if mAssetMediaUri is cached and available to show even after recreation of Activity
-                                    App.mAssetMediaUri :
-                                    // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
-                                    getUriFromAsset(context, "Universita di Cagliari 1.jpg")
-                            ) :
-                                    getUriFromAsset(context, "Universita di Cagliari 1.jpg")
-                    );
+
+//            // Uri can be - default photo, or cached image/video for safety even after recreation of Activity
+//            Uri uri = (App.mPickMediaUri != null && App.mPickMediaUri.getPath() != null ) ?
+//                    ( /* 1 */
+//                            // if some value is set to mPickMediaUri
+//                            (App.mPickMediaUri.getPath().startsWith("/storage/") ?      // "/data/" or "/storage/"
+//                            // if mUri is cached and available to show even after recreation of Activity
+//                            App.mPickMediaUri :
+//                            // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
+//                            getUriFromPicker(context, App.mPickMediaUri.getPath()))
+//                    ):
+//
+//                    ( /* 2 */
+//                            // if not picked any image or video, should take default asset photo
+//                            (App.mAssetMediaUri != null && App.mAssetMediaUri.getPath() != null) ?
+//                            // if some value is set to mAssetMediaUri
+//                            ( /* 3 */
+//                                    App.mAssetMediaUri.getPath().startsWith("/storage/") ?        // "/data/" or "/storage/"
+//                                    // if mAssetMediaUri is cached and available to show even after recreation of Activity
+//                                    App.mAssetMediaUri :
+//                                    // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
+//                                    getUriFromAsset(context, "universita_di_cagliari.jpg")
+//                            ) :
+//                                    getUriFromAsset(context, "universita_di_cagliari.jpg")
+//                    );
 
 
             try {
@@ -216,7 +222,9 @@ public class MediaLoader {
                         File.createTempFile("temp_asset", ".jpg", context.getExternalFilesDir(null)) :
                         File.createTempFile("temp_asset", ".mp4", context.getExternalFilesDir(null));
 
-                outputStream = Files.newOutputStream(tempFile.toPath());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    outputStream = Files.newOutputStream(tempFile.toPath());
+                }
 
                 byte[] buf = new byte[8192];
                 int length;
@@ -243,46 +251,6 @@ public class MediaLoader {
             return uri;
         }
 
-        Uri getUriFromPicker(Context context, String filePath) {
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            File tempFile = null;
-            Uri uri = null;
-
-            try {
-                File file = new File(filePath);
-                inputStream = new FileInputStream(file);
-
-                tempFile = filePath.endsWith(".jpg") ?
-                        File.createTempFile("tempPicker", ".jpg", context.getExternalFilesDir(null)) :
-                        File.createTempFile("tempPicker", ".mp4", context.getExternalFilesDir(null));
-
-                outputStream = Files.newOutputStream(tempFile.toPath());
-
-                byte[] buf = new byte[8192];
-                int length;
-                while ((length = inputStream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, length);
-                }
-
-                uri = Uri.fromFile(tempFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                        outputStream.close();
-                        // creates crash if same temp file (in cacheDir()) is used in VrActivity
-                        tempFile.deleteOnExit();
-                    } catch (IOException e) {
-                        return null;
-                    }
-                }
-            }
-            App.mPickMediaUri = uri;
-            return uri;
-        }
 
         /*      @Override
               protected Void doInBackground(Intent... intent) {
@@ -292,7 +260,7 @@ public class MediaLoader {
 
                   Uri uri = (intent != null && intent.length > 0 && intent[0].getData() != null) ?
                           Uri.parse(intent[0].getExtras().getString("uri")) :
-                          getUriFromAsset(context, "Universita di Cagliari 1.jpg");
+                          getUriFromAsset(context, "universita_di_cagliari.jpg");
       //                    Uri.parse(defaultUrl);
                   int stereoFormat = intent != null && intent.length > 0 ? intent[0].getIntExtra(MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC) : Mesh.MEDIA_MONOSCOPIC;
 
