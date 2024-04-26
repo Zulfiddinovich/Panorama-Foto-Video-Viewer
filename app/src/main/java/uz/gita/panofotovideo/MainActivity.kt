@@ -8,12 +8,12 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,6 +34,7 @@ import uz.gita.panofotovideo.rendering.Mesh
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: VideoActivityBinding
     private lateinit var photoPicker: ActivityResultLauncher<PickVisualMediaRequest>
+    private var SELECT_PICTURE_CODE = 200
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -50,20 +51,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         clickListeners()
-        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            var filePath = ""
-            if (uri != null && uri.scheme.equals("content")) {
-                val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
-                if (cursor != null && cursor.moveToFirst()) {
-                    filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-                    cursor.close()
-
-                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
-                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
-                    App.mPickMediaUri = Uri.parse(filePath)
-                }
-            }
-        }
+//        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+//            var filePath = ""
+//            if (uri != null && uri.scheme.equals("content")) {
+//                val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+//                if (cursor != null && cursor.moveToFirst()) {
+//                    filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+//                    cursor.close()
+//
+//                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
+//                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
+//                    App.mPickMediaUri = Uri.parse(filePath)
+//                }
+//            }
+//        }
 
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
@@ -82,7 +83,8 @@ class MainActivity : AppCompatActivity() {
         binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
 
         binding.openImageGalButton.setOnClickListener {
-            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            imageChooser()
+//            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.openVideoGalButton.setOnClickListener {
@@ -103,9 +105,39 @@ class MainActivity : AppCompatActivity() {
         checkReadPermissionThenOpen()
     }
 
+    fun imageChooser() {
+
+        // create an instance of the
+        // intent of the type image
+        val i = Intent()
+        i.setType("image/*")
+        i.setAction(Intent.ACTION_GET_CONTENT)
+
+        // pass the constant to compare it
+        // with the returned requestCode
+        ActivityCompat.startActivityForResult(this, Intent.createChooser(i, "Select Picture"), SELECT_PICTURE_CODE, null)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE_CODE) {
+                // Get the url of the image from data
+                val selectedImageUri = data?.data
+                if (selectedImageUri != null) {
+                    // update the preview image in the layout
+                    // this is PhotoPicker Uri like this: "/sdcard/.transforms/synthetic/picker/0/com.android.providers.media.photopicker/media/1000065314.jpg"
+                    // but it won't be available after recreation of Activity when navigation to VRActivity, that's why I generate cached copy image or video
+                    App.mPickMediaUri = selectedImageUri
+                }
+            }
+        }
+    }
+
     private fun checkReadPermissionThenOpen() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        ) {
             requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         } else {
             binding.mediaView.loadMedia(intent)
@@ -118,9 +150,11 @@ class MainActivity : AppCompatActivity() {
         val api = DaydreamApi.create(this)
         if (api != null) {
             // Launch the VR Activity with the proper intent.
-            api.launchInVr(DaydreamApi.createVrIntent(ComponentName(this, VrActivity::class.java))
-                .setData(intent.data)
-                .putExtra(MediaLoader.MEDIA_FORMAT_KEY, intent.getIntExtra(MediaLoader.MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC)))
+            api.launchInVr(
+                DaydreamApi.createVrIntent(ComponentName(this, VrActivity::class.java))
+                    .setData(intent.data)
+                    .putExtra(MediaLoader.MEDIA_FORMAT_KEY, intent.getIntExtra(MediaLoader.MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC))
+            )
             api.close()
         } else {
             // Fall back for devices that don't have Google VR Services. This flow should only
@@ -164,8 +198,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun cleanCache() {
         val directory = cacheDir.listFiles();
-        if(directory != null){
-            for (file in directory){
+        if (directory != null) {
+            for (file in directory) {
                 file.delete();
             }
         }
