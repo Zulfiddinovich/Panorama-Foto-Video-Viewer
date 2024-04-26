@@ -9,8 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -34,7 +32,6 @@ import uz.gita.panofotovideo.util.FileUtils
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: VideoActivityBinding
-    private lateinit var photoPicker: ActivityResultLauncher<PickVisualMediaRequest>
     private var SELECT_PICTURE_CODE = 200
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -52,12 +49,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         clickListeners()
-        photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-//                Log.d("TAG", "onCreate: " + Uri.parse(FileUtils.getLocalPath(this, uri)))
-                App.mPickMediaUri = Uri.parse(FileUtils.getLocalPath(this, uri))
-            }
-        }
 
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container_view)) { _, insets ->
@@ -75,16 +66,19 @@ class MainActivity : AppCompatActivity() {
     private fun clickListeners() {
         binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
 
-        binding.openImageGalButton.setOnClickListener {
-            imageChooser()
-//            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
-
         binding.openVideoGalButton.setOnClickListener {
-            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            App.PLAY_MEDIA_SOURCE = 1
+            openLocalMediaPicker()
         }
 
-        binding.networkButton.setOnClickListener { bottomSheetDialogOpen().show() }
+        binding.networkButton.setOnClickListener {
+//            bottomSheetDialogOpen().show()
+            App.PLAY_MEDIA_SOURCE = 2
+
+            App.mMediaLink = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg"
+//            App.mMediaLink = "https://github.com/Zulfiddinovich/Temp/blob/main/Cagliari%203.jpg?raw=true"
+//            App.mMediaLink = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4"
+        }
 
 
         binding.vrButton.setOnClickListener { startVrActivity() }
@@ -98,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         checkReadPermissionThenOpen()
     }
 
-    private fun imageChooser() {
+    private fun openLocalMediaPicker() {
 
         // create an instance of the
         // intent of the type image

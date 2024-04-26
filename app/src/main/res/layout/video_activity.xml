@@ -14,35 +14,19 @@
         android:layout_height="match_parent"
         android:layout_gravity="top"/>
 
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottom_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginStart="30dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:gravity="center_horizontal"
         app:layout_constraintBottom_toTopOf="@id/videoUiContainer"
-        >
+        tools:layout_editor_absoluteX="30dp">
 
-        <ImageView
-            android:id="@+id/open_image_gal_button"
-            style="@style/Widget.Material3.Button.IconButton.Filled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle_ripple"
-            android:contentDescription=""
-            android:padding="14dp"
-            android:src="@drawable/ic_photo_library_24"
-            app:backgroundTint="@null" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/open_video_gal_button"
@@ -51,8 +35,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/circle_ripple"
             android:contentDescription=""
-            android:padding="14dp"
-            android:src="@drawable/ic_video_library_24"
+            android:padding="10dp"
+            android:src="@drawable/ic_photo_video"
             app:backgroundTint="@null"
             app:layout_constraintBottom_toTopOf="@id/videoUiContainer"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -95,7 +79,6 @@
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
     <include
         android:id="@+id/videoUiContainer"

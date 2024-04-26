@@ -33,6 +33,8 @@ import android.view.Surface;
 import androidx.annotation.AnyThread;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,9 +45,13 @@ import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Objects;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import uz.gita.panofotovideo.rendering.Mesh;
 import uz.gita.panofotovideo.rendering.PhotoSphereTools;
 import uz.gita.panofotovideo.rendering.SceneRenderer;
+import uz.gita.panofotovideo.rendering.Utils;
 
 public class MediaLoader {
     private static final String TAG = "MediaLoader";
@@ -141,72 +147,87 @@ public class MediaLoader {
                     DEFAULT_SPHERE_VERTICAL_DEGREES, DEFAULT_SPHERE_HORIZONTAL_DEGREES,
                     stereoFormat);
 
-            // Uri can be - default photo, or cached image/video for safety even after recreation of Activity
-            Uri uri = (App.mPickMediaUri != null && App.mPickMediaUri.getPath() != null ) ?
-                    App.mPickMediaUri :
-                    getUriFromAsset(context, "universita_di_cagliari.jpg");
+            if (App.PLAY_MEDIA_SOURCE == 1) {
+                // Uri can be - default photo, or cached image/video for safety even after recreation of Activity
+                Uri uri = (App.mPickMediaUri != null && App.mPickMediaUri.getPath() != null) ?
+                        App.mPickMediaUri :
+                        getUriFromAsset(context, "universita_di_cagliari.jpg");
 
+                try {
+                    File file = new File(Objects.requireNonNull(uri.getPath()));
+                    if (!file.exists()) {
+                        throw new FileNotFoundException();
+                    }
 
-//            // Uri can be - default photo, or cached image/video for safety even after recreation of Activity
-//            Uri uri = (App.mPickMediaUri != null && App.mPickMediaUri.getPath() != null ) ?
-//                    ( /* 1 */
-//                            // if some value is set to mPickMediaUri
-//                            (App.mPickMediaUri.getPath().startsWith("/storage/") ?      // "/data/" or "/storage/"
-//                            // if mUri is cached and available to show even after recreation of Activity
-//                            App.mPickMediaUri :
-//                            // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
-//                            getUriFromPicker(context, App.mPickMediaUri.getPath()))
-//                    ):
-//
-//                    ( /* 2 */
-//                            // if not picked any image or video, should take default asset photo
-//                            (App.mAssetMediaUri != null && App.mAssetMediaUri.getPath() != null) ?
-//                            // if some value is set to mAssetMediaUri
-//                            ( /* 3 */
-//                                    App.mAssetMediaUri.getPath().startsWith("/storage/") ?        // "/data/" or "/storage/"
-//                                    // if mAssetMediaUri is cached and available to show even after recreation of Activity
-//                                    App.mAssetMediaUri :
-//                                    // if mPickMediaUri is not cached and it won`t be available to show after recreation of Activity
-//                                    getUriFromAsset(context, "universita_di_cagliari.jpg")
-//                            ) :
-//                                    getUriFromAsset(context, "universita_di_cagliari.jpg")
-//                    );
+                    String type = URLConnection.guessContentTypeFromName(uri.getPath());
+                    if (type == null) {
+                        throw new InvalidParameterException("Unknown file type: " + uri);
+                    } else if (type.startsWith("image")) {
+                        // Decoding a large image can take 100+ ms.
+                        ;
+//                    mediaImage = BitmapFactory.decodeFile(uri.getPath());
+                        mediaImage = BitmapFactory.decodeFile(Uri.parse(uri.getPath()).getPath());
+                    } else if (type.startsWith("video")) {
+                        MediaPlayer mp = MediaPlayer.create(context, uri);
+                        synchronized (MediaLoader.this) {
+                            // This needs to be synchronized with the methods that could clear mediaPlayer.
+                            mediaPlayer = mp;
+                        }
+                    } else {
+                        throw new InvalidParameterException("Unsupported MIME type: " + type);
+                    }
 
-
-            try {
-                File file = new File(Objects.requireNonNull(uri.getPath()));
-                if (!file.exists()) {
-                    throw new FileNotFoundException();
+                    displayWhenReady();
+                } catch (IOException | InvalidParameterException | NullPointerException e) {
+                    String errorText = String.format("Error loading file [%s]: %s", uri, e);
+                    Log.e(TAG, errorText);
                 }
 
-                String type = URLConnection.guessContentTypeFromName(uri.getPath());
-                if (type == null) {
-                    throw new InvalidParameterException("Unknown file type: " + uri);
-                } else if (type.startsWith("image")) {
-                    // Decoding a large image can take 100+ ms.
-                    Log.d(TAG, "doInBackground: image type = " + type);
-                    Log.d(TAG, "doInBackground: image uriPath = " + uri.getPath());
-                    ;
-//                    mediaImage = BitmapFactory.decodeFile(uri.getPath());
-                    mediaImage = BitmapFactory.decodeFile(Uri.parse(uri.getPath()).getPath());
-                } else if (type.startsWith("video")) {
-                    MediaPlayer mp = MediaPlayer.create(context, uri);
-                    synchronized (MediaLoader.this) {
-                        // This needs to be synchronized with the methods that could clear mediaPlayer.
-                        mediaPlayer = mp;
+                return null;
+            } else {
+
+                Uri uri = Uri.parse(App.mMediaLink);
+
+                InputStream stream = null;
+                Response response = null;
+                try {
+                    if ("http".equals(uri.getScheme()) || "https".equals(uri.getScheme())) {
+                        OkHttpClient client = new OkHttpClient();
+                        Request request = new Request.Builder().url(uri.toString()).build();
+                        response = client.newCall(request).execute();
                     }
-                } else {
-                    throw new InvalidParameterException("Unsupported MIME type: " + type);
+
+                    String type = "image"; // URLConnection.guessContentTypeFromName(uri.getPath());
+                    if (type == null) {
+                        throw new InvalidParameterException("Unknown file type: " + uri);
+                    } else if (type.startsWith("image")) {
+
+                        // TODO: figure out how to NOT need to read the whole file at once.
+                        byte[] bytes = response.body().bytes();
+                        //stream = response.body().byteStream();
+                        stream = new ByteArrayInputStream(bytes);
+
+                        mediaImage = BitmapFactory.decodeStream(stream);
+                        photoSphereData = PhotoSphereTools.getPhotoSphereData(bytes);
+
+                    } else if (type.startsWith("video")) {
+                        MediaPlayer mp = MediaPlayer.create(context, uri);
+                        synchronized (MediaLoader.this) {
+                            // This needs to be synchronized with the methods that could clear mediaPlayer.
+                            mediaPlayer = mp;
+                        }
+                    }
+                } catch (IOException | InvalidParameterException e) {
+                    e.printStackTrace();
+                } finally {
+                    Utils.closeSilently(stream);
                 }
 
                 displayWhenReady();
-            } catch (IOException | InvalidParameterException | NullPointerException e) {
-                String errorText = String.format("Error loading file [%s]: %s", uri, e);
-                Log.e(TAG, errorText);
+                return null;
             }
-
-            return null;
         }
+
 
         Uri getUriFromAsset(Context context, String assetFileName) {
             AssetManager assetManager = context.getAssets();
@@ -252,66 +273,6 @@ public class MediaLoader {
         }
 
 
-        /*      @Override
-              protected Void doInBackground(Intent... intent) {
-      //            String defaultUrl = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4";
-                  String defaultUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg";
-      //            String defaultUrl = "http://rivendell.dmitrybrant.com/pano1.jpg";
-
-                  Uri uri = (intent != null && intent.length > 0 && intent[0].getData() != null) ?
-                          Uri.parse(intent[0].getExtras().getString("uri")) :
-                          getUriFromAsset(context, "universita_di_cagliari.jpg");
-      //                    Uri.parse(defaultUrl);
-                  int stereoFormat = intent != null && intent.length > 0 ? intent[0].getIntExtra(MEDIA_FORMAT_KEY, Mesh.MEDIA_MONOSCOPIC) : Mesh.MEDIA_MONOSCOPIC;
-
-                  if (stereoFormat != Mesh.MEDIA_STEREO_LEFT_RIGHT && stereoFormat != Mesh.MEDIA_STEREO_TOP_BOTTOM) {
-                      stereoFormat = Mesh.MEDIA_MONOSCOPIC;
-                  }
-
-                  mesh = Mesh.createUvSphere(
-                          SPHERE_RADIUS_METERS, DEFAULT_SPHERE_ROWS, DEFAULT_SPHERE_COLUMNS,
-                          DEFAULT_SPHERE_VERTICAL_DEGREES, DEFAULT_SPHERE_HORIZONTAL_DEGREES,
-                          stereoFormat);
-
-                  InputStream stream = null;
-                  Response response = null;
-                  try {
-                      if ("http".equals(uri.getScheme()) || "https".equals(uri.getScheme())) {
-                          OkHttpClient client = new OkHttpClient();
-                          Request request = new Request.Builder().url(uri.toString()).build();
-                          response = client.newCall(request).execute();
-                      }
-
-                      String type = "image"; // URLConnection.guessContentTypeFromName(uri.getPath());
-                      if (type == null) {
-                          throw new InvalidParameterException("Unknown file type: " + uri);
-                      } else if (type.startsWith("image")) {
-
-                          // TODO: figure out how to NOT need to read the whole file at once.
-                          byte[] bytes = response.body().bytes();
-                          //stream = response.body().byteStream();
-                          stream = new ByteArrayInputStream(bytes);
-
-                          mediaImage = BitmapFactory.decodeStream(stream);
-                          photoSphereData = PhotoSphereTools.getPhotoSphereData(bytes);
-
-                      } else if (type.startsWith("video")) {
-                          MediaPlayer mp = MediaPlayer.create(context, uri);
-                          synchronized (MediaLoader.this) {
-                              // This needs to be synchronized with the methods that could clear mediaPlayer.
-                              mediaPlayer = mp;
-                          }
-                      }
-                  } catch (IOException | InvalidParameterException e) {
-                      e.printStackTrace();
-                  } finally {
-                      Utils.closeSilently(stream);
-                  }
-
-                  displayWhenReady();
-                  return null;
-              }
-      */
         @Override
         public void onPostExecute(Void unused) {
             if (uiView == null) {
