@@ -199,7 +199,7 @@ public class MediaLoader {
                         response = client.newCall(request).execute();
                     }
 
-                    String type = "image"; // URLConnection.guessContentTypeFromName(uri.getPath());
+                    String type = URLConnection.guessContentTypeFromName(uri.getPath());
                     if (type == null) {
                         throw new InvalidParameterException("Unknown file type: " + uri);
                     } else if (type.startsWith("image")) {

@@ -45,21 +45,11 @@ class BoardingActivity: AppCompatActivity() {
         bottomSheetBinding.recyclerView.adapter = mAdapter
 
         val list = listOf(
-            MyData(1, "Cagliari University", "https://github.com/Zulfiddinovich/Temp/blob/main/Cagliari%203.jpg?raw=true", MediaType.Photo),
-            MyData(2, "Colloseum", "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4", MediaType.Video),
-            MyData(3, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(4, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(5, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(6, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(7, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(8, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
-            MyData(9, "House", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg", MediaType.Photo),
+            MyData(1, "Cagliari city", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Cagliari%20city.mp4?raw=true", MediaType.Video),
+            MyData(3, "Cagliari University 1", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Universit%C3%A0%20di%20Cagliari%201.jpg?raw=true", MediaType.Photo),
+            MyData(4, "Cagliari University 2", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%202.jpg?raw=true", MediaType.Photo),
+            MyData(5, "Cagliari University 2", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%203.jpg?raw=true", MediaType.Photo),
+            MyData(7, "Colloseum, Rome", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Inside%20Colosseo%2C%20Rome%2C%20Italy.mp4?raw=true", MediaType.Video),
         )
         mAdapter.submitList(list)
     }
