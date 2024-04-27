@@ -45,11 +45,21 @@ class BoardingActivity: AppCompatActivity() {
         bottomSheetBinding.recyclerView.adapter = mAdapter
 
         val list = listOf(
-            MyData(1, "Cagliari city", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Cagliari%20city.mp4?raw=true", MediaType.Video),
+            MyData(1, "Cagliari city 1", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Cagliari%20city.mp4?raw=true", MediaType.Video),
+            MyData(7, "Cagliari City 2", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Cagliari%20City%202.mp4?raw=true", MediaType.Video),
+            MyData(5, "Cagliari city 3", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%204.jpg?raw=true", MediaType.Photo),
+            MyData(5, "Cagliari city 4", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%205.jpg?raw=true", MediaType.Photo),
             MyData(3, "Cagliari University 1", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Universit%C3%A0%20di%20Cagliari%201.jpg?raw=true", MediaType.Photo),
             MyData(4, "Cagliari University 2", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%202.jpg?raw=true", MediaType.Photo),
-            MyData(5, "Cagliari University 2", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%203.jpg?raw=true", MediaType.Photo),
+            MyData(5, "Cagliari University 3", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360photos/Cagliari%203.jpg?raw=true", MediaType.Photo),
             MyData(7, "Colloseum, Rome", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Inside%20Colosseo%2C%20Rome%2C%20Italy.mp4?raw=true", MediaType.Video),
+//            MyData(7, "Rome City Tour", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/Rome%20City%20Tour.mp4?raw=true", MediaType.Video),
+//            MyData(7, "One day in Rome", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/One%20day%20in%20Rome.mp4?raw=true", MediaType.Video),
+//            MyData(7, "Tashkent", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/%D0%A2%D0%B0%D1%88%D0%BA%D0%B5%D0%BD%D1%82.mp4?raw=true", MediaType.Video),
+//            MyData(7, "Pool", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/At%20The%20Pool.mp4?raw=true", MediaType.Video),
+            MyData(7, "KOKALDOSH MADRASASI", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/KOKALDOSH%20MADRASASI.mp4?raw=true", MediaType.Video),
+            MyData(7, "HAST-IMOM MAJMUASI", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/HAST-IMOM%20MAJMUASI.mp4?raw=true", MediaType.Video),
+//            MyData(7, "FEAR OF HEIGHTS", "https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/blob/master/media/360videos/FEAR%20OF%20HEIGHTS.mp4?raw=true", MediaType.Video),
         )
         mAdapter.submitList(list)
     }

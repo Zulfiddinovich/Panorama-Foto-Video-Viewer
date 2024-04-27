@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.RecyclerView
+import uz.gita.panofotovideo.R
 import uz.gita.panofotovideo.databinding.RecycleItemBinding
 
 /**
@@ -26,6 +27,9 @@ class MyAdapter(val onClick: (String) -> Unit) : androidx.recyclerview.widget.Li
     inner class MyViewHolder(val binding: RecycleItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
             binding.nameTV.text = currentList[position].name
+
+            if(currentList[position].type == MediaType.Photo) binding.imageIV.setImageResource(R.drawable.ic_photo_library_24)
+            else binding.imageIV.setImageResource(R.drawable.ic_video_library_24)
 
             binding.showB.setOnClickListener {
                 onClick.invoke(currentList[position].url)
