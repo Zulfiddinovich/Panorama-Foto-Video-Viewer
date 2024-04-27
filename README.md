@@ -4,12 +4,8 @@ This app enables 2D view and Cardboard view to share modern UX experience with y
 
 
 # Video & screenshots
-[about app.mp4](media%2Fabout%20app.mp4)
 
-<img alt="" src="media%2Fscreenshots%2FScreenshot_1.png" width="250"/>
-<img alt="" src="media%2Fscreenshots%2FScreenshot_2.png" width="250"/>
-<img alt="" src="media%2Fscreenshots%2FScreenshot_3.png" width="250"/>
-<img alt="" src="media%2Fscreenshots%2FScreenshot_4.png" width="250"/>
+<img alt="" src="media%2Fscreenshots%2FScreenshot_1.png" width="250"/>   <img alt="" src="media%2Fscreenshots%2FScreenshot_2.png" width="250"/>   <img alt="" src="media%2Fscreenshots%2FScreenshot_3.png" width="250"/>  <img alt="" src="media%2Fscreenshots%2FScreenshot_4.png" width="250"/>
 
 # How it works
 **Virtual-reality photography** is the interactive viewing of panoramic photographs, generally encompassing a 360-degree circle or a 
@@ -22,7 +18,7 @@ There are 4 types of stitching photos together to see 360 panorama:
 3. **Cubical stitching** (Today, this technique is considered rather "old school," and spherical stitching has become more mainstream for producing these types of tours.)
 4. **One-shot optics** (Using one-shot panoramic optics one can create quick and easy panoramic videos and images such as the type used on the iPhone.)
 
-    <img alt="" src="media%2Fhow%20works%201.gif" width="180"/>
+    <img alt="" src="media%2Fhow%20works%201.gif" width="320"/>
     <img alt="" src="media%2Fhow%20works%202.png" width="180"/>
    
 # Gooogle VR SDK
