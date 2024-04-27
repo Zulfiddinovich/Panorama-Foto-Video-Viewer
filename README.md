@@ -5,6 +5,10 @@ This app enables 2D view and Cardboard view to share modern UX experience with y
 
 # Video & screenshots
 
+
+https://github.com/Zulfiddinovich/Panorama-Foto-Video-Viewer/assets/73757370/c0feff75-7e74-4833-8cea-ac0199584358
+
+
 <img alt="" src="media%2Fscreenshots%2FScreenshot_1.png" width="250"/>   <img alt="" src="media%2Fscreenshots%2FScreenshot_2.png" width="250"/>   <img alt="" src="media%2Fscreenshots%2FScreenshot_3.png" width="250"/>  <img alt="" src="media%2Fscreenshots%2FScreenshot_4.png" width="250"/>
 
 # How it works
