@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uz.gita.panofotovideo.rendering;
+package uz.gita.panofotovideo.google_vr.rendering;
 
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import com.google.vr.sdk.base.Eye;
 import java.nio.FloatBuffer;
 
-import static uz.gita.panofotovideo.rendering.Utils.checkGlError;
+import static uz.gita.panofotovideo.google_vr.rendering.Utils.checkGlError;
 
 /**
  * Utility class to generate & render spherical meshes for video or images. Use the static creation

@@ -6,9 +6,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
-    <uz.gita.panofotovideo.MonoscopicView
+    <uz.gita.panofotovideo.google_vr.MonoscopicView
         android:id="@+id/media_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

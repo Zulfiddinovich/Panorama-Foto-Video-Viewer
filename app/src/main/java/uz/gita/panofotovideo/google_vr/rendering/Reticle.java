@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uz.gita.panofotovideo.rendering;
+package uz.gita.panofotovideo.google_vr.rendering;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import com.google.vr.sdk.controller.Orientation;
 import java.nio.FloatBuffer;
 
-import static uz.gita.panofotovideo.rendering.Utils.checkGlError;
+import static uz.gita.panofotovideo.google_vr.rendering.Utils.checkGlError;
 
 /**
  * Renders a reticle in VR for the Daydream Controller.

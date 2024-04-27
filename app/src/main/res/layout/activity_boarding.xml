@@ -7,7 +7,7 @@
     android:background="@color/Transparent80"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BoardingActivity">
+    tools:context=".activities.BoardingActivity">
 
     <ImageView
         android:id="@+id/imageView"

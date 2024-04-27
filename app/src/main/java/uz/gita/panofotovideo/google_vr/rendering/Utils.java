@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uz.gita.panofotovideo.rendering;
+package uz.gita.panofotovideo.google_vr.rendering;
 
 import static android.opengl.GLU.gluErrorString;
 

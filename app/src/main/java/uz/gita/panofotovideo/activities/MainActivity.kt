@@ -1,24 +1,22 @@
-package uz.gita.panofotovideo
+package uz.gita.panofotovideo.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.vr.ndk.base.DaydreamApi
+import uz.gita.panofotovideo.google_vr.MediaLoader
+import uz.gita.panofotovideo.R
 import uz.gita.panofotovideo.databinding.VideoActivityBinding
-import uz.gita.panofotovideo.rendering.Mesh
-import uz.gita.panofotovideo.util.FileUtils
+import uz.gita.panofotovideo.google_vr.rendering.Mesh
 
 
 /**

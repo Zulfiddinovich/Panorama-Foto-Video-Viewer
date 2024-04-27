@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/image_IV"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_photo_video"
+        android:layout_gravity="center_vertical"
+        app:tint="@color/fielet"
+        android:padding="4dp"
+        android:background="@drawable/corner_rectangle"
+        android:layout_margin="6dp"
+        android:elevation="4dp"
+        />
+
+    <TextView
+        android:id="@+id/name_TV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_gravity="center_vertical"
+        android:textSize="17sp"
+        android:typeface="serif"
+        android:text="Colloseum, Rome"
+        />
+
+    <TextView
+        android:id="@+id/show_B"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_photo_video"
+        android:layout_gravity="center_vertical"
+        app:tint="@color/white"
+        android:typeface="serif"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="12sp"
+        android:text="show"
+        android:layout_margin="6dp"
+        android:elevation="4dp"
+        android:background="@drawable/oval_rectangle_ripple"
+        android:contentDescription="Show this media"
+        />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

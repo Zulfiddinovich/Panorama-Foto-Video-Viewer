@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uz.gita.panofotovideo.rendering;
+package uz.gita.panofotovideo.google_vr.rendering;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -36,7 +36,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.ViewGroup;
 
-import uz.gita.panofotovideo.VideoUiView;
+import uz.gita.panofotovideo.google_vr.VideoUiView;
 import com.google.vr.sdk.controller.Orientation;
 import java.util.concurrent.atomic.AtomicBoolean;
 

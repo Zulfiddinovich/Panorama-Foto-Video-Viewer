@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uz.gita.panofotovideo;
+package uz.gita.panofotovideo.google_vr;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,12 +22,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -42,7 +40,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import uz.gita.panofotovideo.rendering.SceneRenderer;
+import uz.gita.panofotovideo.google_vr.rendering.SceneRenderer;
 
 /**
  * Renders a GL scene in a non-VR Activity that is affected by phone orientation and touch input.

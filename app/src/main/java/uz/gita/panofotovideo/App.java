@@ -14,6 +14,7 @@ public class App extends Application {
     static public Uri mPickMediaUri = null;
     static public Uri mAssetMediaUri = null;
 
+    // default media from network
     static public String mMediaLink = "https://github.com/Zulfiddinovich/Temp/blob/main/Cagliari%203.jpg?raw=true";
 
     /**

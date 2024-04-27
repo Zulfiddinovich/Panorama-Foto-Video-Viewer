@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<uz.gita.panofotovideo.VideoUiView
+<uz.gita.panofotovideo.google_vr.VideoUiView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".VideoUiView">
+    tools:context=".google_vr.VideoUiView">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -69,4 +69,4 @@
             android:paddingEnd="8dp"/>
 
     </LinearLayout>
-</uz.gita.panofotovideo.VideoUiView>
+</uz.gita.panofotovideo.google_vr.VideoUiView>

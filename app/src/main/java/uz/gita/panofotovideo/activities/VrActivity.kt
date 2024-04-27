@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uz.gita.panofotovideo
+package uz.gita.panofotovideo.activities
 
 import android.Manifest.permission
 import android.content.Intent
@@ -24,12 +24,14 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
-import uz.gita.panofotovideo.rendering.SceneRenderer
+import uz.gita.panofotovideo.google_vr.rendering.SceneRenderer
 import com.google.vr.ndk.base.DaydreamApi
 import com.google.vr.sdk.base.*
 import com.google.vr.sdk.base.GvrView.StereoRenderer
 import com.google.vr.sdk.controller.Controller
 import com.google.vr.sdk.controller.ControllerManager
+import uz.gita.panofotovideo.google_vr.MediaLoader
+import uz.gita.panofotovideo.google_vr.VideoUiView
 import javax.microedition.khronos.egl.EGLConfig
 
 /**

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uz.gita.panofotovideo;
+package uz.gita.panofotovideo.google_vr;
 
 import android.content.Context;
 import android.content.Intent;
@@ -48,10 +48,12 @@ import java.util.Objects;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import uz.gita.panofotovideo.rendering.Mesh;
-import uz.gita.panofotovideo.rendering.PhotoSphereTools;
-import uz.gita.panofotovideo.rendering.SceneRenderer;
-import uz.gita.panofotovideo.rendering.Utils;
+import uz.gita.panofotovideo.App;
+import uz.gita.panofotovideo.R;
+import uz.gita.panofotovideo.google_vr.rendering.Mesh;
+import uz.gita.panofotovideo.google_vr.rendering.PhotoSphereTools;
+import uz.gita.panofotovideo.google_vr.rendering.SceneRenderer;
+import uz.gita.panofotovideo.google_vr.rendering.Utils;
 
 public class MediaLoader {
     private static final String TAG = "MediaLoader";

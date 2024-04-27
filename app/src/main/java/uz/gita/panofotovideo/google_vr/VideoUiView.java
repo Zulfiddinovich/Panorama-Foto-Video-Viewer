@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uz.gita.panofotovideo;
+package uz.gita.panofotovideo.google_vr;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -37,7 +37,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import uz.gita.panofotovideo.rendering.CanvasQuad;
+
+import uz.gita.panofotovideo.R;
+import uz.gita.panofotovideo.google_vr.rendering.CanvasQuad;
 
 /**
  * Contains a UI that can be part of a standard 2D Android Activity or a VR Activity.
