@@ -4,8 +4,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@color/Transparent80"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BoardingActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:src="@drawable/uzbekistan_360" />
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/bottom_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingStart="60dp"
+        android:paddingEnd="60dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/progress_bar"
+        tools:layout_editor_absoluteX="30dp">
+
+
+        <ImageView
+            android:id="@+id/open_video_gal_button"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_ripple"
+            android:contentDescription=""
+            android:padding="10dp"
+            android:src="@drawable/ic_photo_video"
+            app:backgroundTint="@null"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/network_button"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_ripple"
+            android:contentDescription=""
+            android:padding="14dp"
+            android:src="@drawable/www"
+            app:backgroundTint="@null" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="50dp"
+        app:trackThickness="6dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

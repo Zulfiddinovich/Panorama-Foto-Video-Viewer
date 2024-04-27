@@ -32,7 +32,6 @@ import uz.gita.panofotovideo.util.FileUtils
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: VideoActivityBinding
-    private var SELECT_PICTURE_CODE = 200
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -66,58 +65,15 @@ class MainActivity : AppCompatActivity() {
     private fun clickListeners() {
         binding.videoUiContainer.videoUiView.setVrIconClickListener { startVrActivity() }
 
-        binding.openVideoGalButton.setOnClickListener {
-            App.PLAY_MEDIA_SOURCE = 1
-            openLocalMediaPicker()
-        }
-
-        binding.networkButton.setOnClickListener {
-//            bottomSheetDialogOpen().show()
-            App.PLAY_MEDIA_SOURCE = 2
-
-            App.mMediaLink = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/MK_30645-58_Stadtschloss_Wiesbaden.jpg/1280px-MK_30645-58_Stadtschloss_Wiesbaden.jpg"
-//            App.mMediaLink = "https://github.com/Zulfiddinovich/Temp/blob/main/Cagliari%203.jpg?raw=true"
-//            App.mMediaLink = "https://github.com/Zulfiddinovich/Temp/raw/main/360%20video-%20Inside%20Colosseo,%20Rome,%20Italy.mp4"
-        }
-
-
         binding.vrButton.setOnClickListener { startVrActivity() }
 
         binding.mediaView.onPositionTouched { position ->
-            binding.bottomLinear.isVisible = !binding.bottomLinear.isVisible
+            binding.vrButton.isVisible = !binding.vrButton.isVisible
         }
 
         binding.mediaView.initialize(binding.videoUiContainer.videoUiView)
 
         checkReadPermissionThenOpen()
-    }
-
-    private fun openLocalMediaPicker() {
-
-        // create an instance of the
-        // intent of the type image
-        val i = Intent()
-        i.setType("*/*")
-        i.setAction(Intent.ACTION_GET_CONTENT)
-
-        // pass the constant to compare it
-        // with the returned requestCode
-        ActivityCompat.startActivityForResult(this, Intent.createChooser(i, "Select Picture"), SELECT_PICTURE_CODE, null)
-    }
-
-    @SuppressLint("Range")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE_CODE) {
-                // Get the url of the image from data
-                val uri = data?.data
-
-                if (uri != null){
-                    App.mPickMediaUri = Uri.parse(FileUtils.getLocalPath(this, uri))
-                }
-            }
-        }
     }
 
     private fun checkReadPermissionThenOpen() {
@@ -191,14 +147,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun bottomSheetDialogOpen(): BottomSheetDialog {
-
-        val dialog = BottomSheetDialog(this)
-        val bottomSheet = layoutInflater.inflate(R.layout.bottom_sheet, null)
-
-//        bottomSheet.buttonSubmit.setOnClickListener { dialog.dismiss() }
-
-        dialog.setContentView(bottomSheet)
-        return dialog
-    }
 }
